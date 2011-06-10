@@ -7,7 +7,106 @@
 </head>
 
 <body>
-  TODO  
+  <h2>Bugzilla 4.0.1 installation under Ubuntu 11.04</h2> 
+  <br />
+  
+  <p>
+    Bugzilla installation have several dependencies and these are listed as follows:
+    <ul>
+      <li>Perl 5.8.1 or above</li>
+      <li>Install database engine (I'll go with MySQL, so it has to be version 4.1.2. or higher)</li>
+      <li>Install a webserver</li>
+      <li>Install Bugzilla</li>
+      <li>Install Perl modules</li>
+      <li>Install a Mail Transfer Agent (Sendmail 8.7 or above, or an MTA that is Sendmail-compatible with at least this version)</li> 
+      <li>Cofigure all of the above</li>
+    </ul>
+    This tutorial is based on my experience installing Bugzilla by following tutorial from 
+    <a href="http://www.bugzilla.org/docs/4.0/en/html/installation.html">Bugzilla's installation site</a>
+  </p>
+  
+  <p>
+    <h3>Perl</h3>
+    I tried to install latest version of Perl with:
+    <pre>
+      $ sudo apt-get install perl
+    </pre>
+    It installed 5.10.1 and claimed to be the latest, but according to http://www.perl.org, latest version was 5.14. I could download and install latest version, but I didn't
+    want to and continued further with my current 5.10.1 version. To know which version you are running:
+    <pre>
+      $ perl -v
+    </pre>
+  </p>
+  <p>
+    <h3>Install database engine</h3>
+    Buzilla supports MySQL, PostgreSQL and Oracle as DB servers but I'm going to use MySQL here. First, to check if I have MySQL installed:
+    <pre>
+      $ mysql -v
+    </pre>
+    But I got error 1045 stating that I don't have permission to run mysql instance, you I tried with:
+    <pre>
+      $ mysql -u root -p
+    </pre>
+    This states that my username is 'root' and asks for a password. So, that was ok and I also learned that I have version 5.1.54-1ubuntu4 installed on my machine. If you 
+    don't have MySQL installed, go to <a href="http://www.mysql.com">MySQL web site</a> and get version 4.1.2 or higher. In Ubuntu, this can also be installer under 
+    Ubuntu Software Center.
+  </p>
+  <p>
+    <h3>Install a webserver</h3>
+    I already installed Apache web server and the steps I took you can see <a href="../apache/index.html">here</a>. Also, any web server capable of running CGI scripts should
+    do fine. Anyway, Apache web server is highly recommended.
+  </p>
+  <p>
+    <h3>Installing Bugzilla</h3>
+    First step was to <a href="http://www.bugzilla.org/download/#stable">download bugzilla tarball</a>. I chose version 4.0.1 which was the latest stable version at the time
+    this manual was wrote. Here is a link to the <a href="http://ftp.mozilla.org/pub/mozilla.org/webtools/bugzilla-4.0.1.tar.gz">Bugzilla tarball</a>
+    <br />
+    Now I copied this tarball into Apache's htdocs folder since it has to be into folder accessible by web users. One option is to be in web server's doc folder (that's what
+    I did), second is to be in /usr/local with symbolic link to the web server's document directories or an alias in the web server's configuration.
+    <pre>
+      $ sudo cp ~/Downloads/bugzilla-4.0.1.tar.gz /usr/local/apache2/htdocs
+    </pre>
+  </p>
+  <p>
+    <h3>Perl modules</h3>
+    Buzilla's installation process is based on a script called checksetup.pl which first checks for appropriate versions of used Perl modules. To check if you have all 
+    required modules, let the script check for it, but first uncompress downloaded tarball like:
+    <pre>
+      $ cd /usr/local/apache2/htdocs
+      $ sudo gzip -d bugzilla-4.0.1.tar.gz
+      $ sudo tar xvf bugzilla-4.0.1.tar
+      $ cd bugzilla-4.0.1
+      $ ./checksetup.pl --check-modules
+    </pre>
+    Last command will write which modules and appropriate versions are installed and which are not and will offer a command list that needs to be executed in order to 
+    install all needed modules. To try to install all of them (and that's what I did) with one command:
+    <pre>
+      $ /usr/bin/perl install-modules.pl --all
+    </pre>
+    During this installation, installer always complained about the missing YAML which is probably some Perl module which was not installed on my machine. Also, it takes some 
+    time for the script to finish. After finishing the script, I still left with a lot of uninstalled modules, so I tried to install them one by one (YAML being first,
+    although it's not critical).
+    <pre>
+      $ sudo /usr/bin/perl install-modules.pl YAML
+      $ sudo /usr/bin/perl install-modules.pl DateTime
+      $ sudo /usr/bin/perl install-modules.pl Template
+      $ sudo /usr/bin/perl install-modules.pl Email::Send
+      $ sudo /usr/bin/perl install-modules.pl Email::MIME
+    </pre>
+    Then I tried again to run script for installing all required modules, but this time used 'sudo' since it looks like that was wrong the first time:
+    <pre>
+      $ sudo /usr/bin/perl install-modules.pl --all
+    </pre>
+    
+  </p>
+  <p>
+    <h3>Installing Mail Transfer Agent</h3>
+    I installed Sendmail on my Ubuntu by using:
+    <pre>
+      $ sudo apt-get install sendmail
+    </pre>
+    It installed Sendmail v.8.14.4-2ubuntu1.
+  </p>
 </body>
 
 </html>
