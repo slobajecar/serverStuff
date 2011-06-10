@@ -1,0 +1,65 @@
+<!DOCUMENT html>
+
+<html>
+
+<head>
+  <title>Apache 2.2.19 installation</title>
+</head>
+
+<body>
+  <h2>Installation is done on Ubuntu 11.04 version which runs as a virtual box</h2>
+  <br/>
+  <p>
+    To start, first download the Apache 2.2.19 installation to your computer which can be found on
+    <a href="http://httpd.apache.org/download.cgi">Apache server project download page</a>. You might also check for
+    instruction on checking integrity of downloaded files. I downloaded <a href="http://www.reverse.net/pub/apache//httpd/httpd-2.2.19.tar.gz">httpd-2.2.19.tar.gz</a> 
+    file to my /Downloads directory and extracted it there.
+  </p>
+  <p>
+    Next step was to follow installation instructions which can be found on <a href="http://httpd.apache.org/docs/2.2/install.html">Apache compiling and installing page</a>
+    where I followed the 'overview for impatient' section. Everything appeared to work fine after that, so here is a short summary of what I did. First, here are the
+    alternative instructions how to download and extract the package (I already did that by extensive use of Ubuntu's UI). To download package:
+    <pre>
+      $ lynx http://httpd.apache.org/download.cgi
+    </pre>
+    and to extract it:
+    <pre>
+      $ gzip -d httpd-2.2.19.tar.gz
+      $ tar xvf httpd-2.2.19.tar
+      $ cd httpd-2.2.19
+    </pre>
+    When it's done, next step is to go into the httpd-2.2.19 directory and then install the application from there. First step there is to configure it:
+    <pre>
+      $ ./configure --prefix=PREFIX
+    </pre>
+    <i>PREFIX</i> here is a filesystem path under the which server should be installed. If ommited, it defaults to /usr/local/apache2. I actually ommited it, so in the
+    further text I will make a reference to /usr/local/apache2 wherever PREFIX should be used. However, for flexibility, I will continue to use PREFIX. Next step is
+    compilation and it is done with:
+    <pre>
+      $ make
+    </pre>
+    After that comes installation:
+    <pre>
+      $ sudo make install
+    </pre>
+    Server can be configured with:
+    <pre>
+      $ sudo nano PREFIX/conf/httpd.conf
+    </pre>
+    And finally, to check if server is running correctly:
+    <pre>
+      $ PREFIX/bin/apachectl -k start
+    </pre>
+    If everything is fine, you should be able to get your test page on your <a href="http://localhost">localhost</a> and you should see a bold h1 text 'It works!'. 
+    You can now change your homepage (index.html) which is located in PREFIX/htdocs folder under name index.html by:
+    <pre>
+      $ sudo nano /usr/local/apache2/htdocs/index.html
+    </pre>
+    When this file is changed, you should see the changes when you refresh your localhost page in a browser.
+    To stop the server, you can do:
+    <pre>
+      $ PREFIX/bin/apachectl -k stop
+    </pre>
+</body>
+
+</html>
