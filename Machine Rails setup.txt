@@ -1,0 +1,163 @@
+Install tools for Ubuntu 10.10 needed to work with Ruby on Rails 3
+==================================================================
+
+1. Install Aptitude
+> sudo apt-get install aptitude
+
+2. Install base stuff (one by one):
+sudo aptitude install build-essential bison openssl libreadline5 \ 
+                        libreadline5-dev curl git zlib1g zlib1g-dev \ 
+                        libssl-dev libsqlite3-0 libsqlite3-dev sqlite3 \ 
+                        libxml2-dev libmysqlclient-dev autoconf
+
+3. Use CURL to get and install the source for RVM
+> bash < <( curl http://rbm.beginrescueend.com/releases/rvm-install-head )
+
+4. The post-install process for installing RVM is to apply this setting to a settings file with:
+> gedit .bashrc
+
+And add last line to be:
+[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" # This loads RVM into a shell session.
+
+Restart the console.
+
+5. If everything went fine, there should be response from the program if RVM is requested with:
+> rvm
+
+6. More on installing RVM can be found in:
+https://rvm.beginrescueend.com/rvm/install/
+
+7. Install Ruby by using RVM:
+> rvm install 1.9.2
+> rvm --default use 1.9.2
+
+8. If this went well, you can check installed Ruby version with:
+> ruby -v
+or installed gemsets:
+> rvm gemset list
+
+9. To use 'global' getset, type:
+> rvm use 1.9.2@global
+
+10. To list local gems, you can use:
+> gem list
+
+11. Install Bundler gem:
+> gem install bundler
+
+12. Instll Rails (which is a gem):
+> gem install rails
+
+13. You can take a look at all the gems installed with Rails with another:
+> gem list
+
+14. Check in which gemset you are right now:
+> rvm gemset name
+(result should be 'global' since just before you chose to use 'global' gemset)
+
+15. Install SqlLite for Rails
+> gem install sqlite3-ruby
+or, as gem name probably changed, just:
+> gem install sqlite3
+
+16. Install haml:
+> gem install haml
+
+17. Install git-flow:
+> wget --no-check-certificate -q -O - https://github.com/nvie/gitflow/raw/develop/contrib/gitflow-installer.sh | sudo sh
+
+18. Install OpenJDK Java 6 Runtime first to be able to install Aptana Studio (this is an optional step, but a very good tool)A 
+
+19. Go to http://www.aptana.com, skini Aptana 3.0 beta verziju za Linux kao standalone aplikaciju, raspakuj je i instaliraj.
+
+20. Install other helpers and nice to have tools:
+> gem install cheat
+> gem install rspec
+> gem install rspec-rails
+> gem install autotest
+> gem install autotest-rails
+
+21. Install gitk, visualization tool for git, very useful:
+> sudo apt-get install gitk
+
+
+Working and playing around a little bit
+=======================================
+
+1. Create two new test sites with sth like:
+> mkdir Sites
+> cd Sites
+> rails new site1
+> rails new site2
+
+2. Now create separate gemsets for these two new sites:
+> rvm gemset create site1
+> rvm gemset create site2
+
+3. To check if gemsets were created as it should be:
+> rvm getset list
+
+4. To automatically change gemset whenever you cd into site1 or site2, you have to change config files .rvmrc that can be found in
+each of the new site directories. To add wanted commands, you should execute:
+> echo "rvm 1.9.2@site1" > site1/.rvmrc
+> echo "rvm 1.9.2@site2" > site2/.rvmrc
+
+5. Now, when you change directory into site1 or site2, you will get a prompt (just once) if .rvmrc script should be executed and if 
+you should trust the source of the script. When the script is executed, it will change the current gemset to either site1 or site2,
+depending on the selection of the folder. You can try this by alternately entering from site1 folder to site2. In case some more
+tweaking is desired, you can always edit .rvmrc files inside of these folders. Checking which gemset is currently active is done by:
+> rvm gemset name
+
+
+Normal workflow
+===============
+
+1. Create new demo website with:
+> cd Sites
+> rails new demo
+
+2. Open Aptana studio, start new project, give it a name and when asked, relate it to a /Sites/demo folder. All files are going to be
+imported into Aptana and no files will be recreated.
+
+3. In Aptana, open Gemfile in the project to see what gems we are going to be using. Replace:
+gem 'sqlite3'
+with:
+gem 'sqlite3-ruby', :require => 'sqlite3'
+gem 'haml'
+
+group :development, :test do
+	gem 'rspec', '>=2.0.0.beta.22'
+	gem 'rspec-rails', '>=2.0.0.beta.22'
+	gem 'autotest'
+	gem 'autotest-rails'
+end
+
+4. Now get back to terminal and install Bundler (which is a wrapper around the gems) in demo folder:
+> cd Sites/demo
+> bundle install
+
+5. To start and initialize testing, jump back to demo directory and prepare for the next operation:
+> cd Sites/demo
+> rails g rspec:install
+
+6. While in a demo directory, start git flow ie. initialize repository:
+> git flow init
+
+7. To check status of the files re. git, you can do sth like (while in a demo folder):
+> git status
+
+8. You can use gitk now to visualize git status and get some more data:
+> gitk
+
+9. Now make initial commit into repository with:
+> git add .
+> git commit -am "Skeleton of project"
+
+10. To make sure it works so far, try to start application with:
+> rails s
+
+11. If browser is not started, start it manually and to view first page, go to:
+http://localhost:3000/
+
+
+

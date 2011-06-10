@@ -1,0 +1,203 @@
+Assumption:
+===========
+
+- Ruby, Rails, Git, RVM, Rake and all other neccessary tools are already installed and ready to use.
+- I will use /sloba/Sites folder as the default starting folder.
+- MySQL server is installed (from Ubuntu software center) as well as some front end visualizer for it and other tools (MySQL Navigator, MySQL Client, MySQL Administrator, MySQL Query Browser and Emma). When installed, I selected following parameters for the DB:
+  Host: localhost
+  User: root
+  Password: is1011az
+
+Breadcrumbs:
+============
+
+1. Start new project with:
+> rails new mysite
+
+2. Get into /sloba/Sites/mysite folder, initialize new repository and add current content in it:
+> git flow init
+> git add .
+> git commit -am "Skeleton of the project"
+
+3. Install MySql gem by using:
+> gem instal mysql
+Another approach is to perform step 4. (edit Gemfile) and then start Bundler which should handle all dependencies and install neccessary files:
+> bundle install
+In case mysql installation fails, dev libraries should be installed as well. Typically, following libraries should be installed:
+- libmysqld-pic : MySQL database development files
+- libmysqld-dev : MySQL embedded database development files
+- libmysqlclient-dev: MySQL client database development files
+Without these library files, mysql cannot be installed properly.
+
+4. Instruct Gemfile (located in the root site filder /Sites/mysite) that we are going to use mysql by uncommenting 'sqlite3' and adding 'mysql' like:
+> # gem 'sqlite3'
+> gem 'mysql'
+
+5. To get the socket that needs to be used in configuration, type:
+> mysql_config --socket
+  Obtained value should be added into database.yml file, as depicted in the next point.
+
+6. To configure MySQL to be used instead of the SQLite3, mysite/config/database.yml should be modified so that 'development' section looks like:
+development:
+  adapter: mysql
+  encoding: utf8
+  reconnect: false
+  database: db/mysite_development
+  pool: 5
+  username: root
+  password: is1011az
+  socket: /var/run/mysqld/mysqld.sock
+
+  Same changes should be done to 'test' and 'production' section of the database.yml file (with database names mysite_test and mysite_production)
+
+7. Now, create the DB by using rake:
+> rake db:create
+  This command creates two new databases: db/mysite_test and db/mysite_production which can be seen in Emma or MySQL Navigator or some other similar tool.
+
+8. To set up a home page, a view and a controller must be built, which is done by:
+> rails generate controller home index
+  This line generates controller named 'home' with method (action) named 'index' which should be default page. Now I will edit created view template with:
+> nano app/views/home/index.html.erb
+  And will modify it to contain only single line of code:
+<h1>This is homepage</h1>
+
+9. To set home page to newly created, static home from /public folder must be deleted since it takes presedence over the dynamically created page.
+> rm public/index.html
+  Now routing should be set so that Rails knows where home page is located. This is done by modifying config/routes.rb file:
+> nano config/routes.rb
+  And following line should be added:
+root :to => "home#index"
+  This will route homepage to newly added page. Check can be made by starting a server:
+> rails s
+  And opening hompage in browser with:
+http://localhost:3000 (or whichever port is active in webserver)
+
+10. To create home page outline, I'm going to use some tools to automate it. It will be based on BlueprintCSS tool which can be found on:
+http://www.blueprintcss.org/
+  There, on page:
+https://github.com/joshuaclayton/blueprint-css/wiki/Tools-and-Resources
+  a links to the tools which can automate this process can be found. I'm going to use Construct, based on Blueprint CSS:
+http://constructyourcss.com/
+
+11. After creating grid that is ok with me, I generate HTML and CSS from the tool. Copy HTML and add it to /app/views/home/index.html.erb. 
+Then new CSS file should be created in /public/stylesheets. I called the file blueprint.css and it contains same CSS that I received from Construct tool.
+All stylesheets in this folder are already linked which can be checked in /app/views/home/layouts/application.html.erb
+For all this to work, a screen.css must be also created in /public/stylesheets folder. Content of this file can be obtained from http://constructyourcss.com/
+by entering the Firebug, CSS analyzer and listing screen.css file. Another way is to go to http://ianli.com/blueprinter/ and pick up screen.css from there.
+
+12. Next thing to do is to play with screen.css, introduce some new styles, create new images, adding them and basically, create page outline and look.
+
+13. Let's get back to the DB. First model needs to be created in order to have migration files done. There migration files are then applied on top of the
+existing DB and is used for update, create and changes on tables. For blig purposes, I'm going to create tables (and relatioships) as follows:
+
+BlogEntry
+=========
+BlogEntryID : int
+CreateDate : datetime
+ChangeDate : datetime
+PublishedDate : datetime
+CategoryID : int
+UserID : int
+Title : string
+Content : string
+
+Category
+=========
+CategoryID : int
+CreateDate : datetime
+ChangeDate : datetime
+Name : string
+
+User
+====
+UserID : int
+CreateDate : datetime
+ChangeDate : datetime
+Name : string
+AvatarImage : image?
+<some more personal data, look @ Jason Etheridge's blog>
+
+Comment
+=======
+CommentID : int
+CreateDate : datetime
+ChangeDate : datetime
+BlogEntryID : int
+UserID : int
+
+14. To create BlogEntry model (which will be used for table creation):
+> rails generate model BlogEntry 
+To review content of the generated migration file:
+> nano db/migrate/xxxx_create_blog_entries.rb
+This file should be changed in such a way to reflect data that is used to form BlogEntry table. Complete file should look like this (self_up method should be modified since it explains what is migrated with one version up, self_down
+is for downgrading):
+class CreateBlogEntries < ActiveRecord::Migration
+  def self.up
+    create_table :blog_entries do |t|
+      t.column :created_at, :timestamp
+      t.column :created_on, :timestamp
+      t.column :published_date, :datetime, :null => true
+      t.column :category_id, :integer, :null => false
+      t.column :user_id, :integer, :null => false
+      t.column :title, :string, :limit => 255, :null => false
+      t.column :content, :text, :limit => 65535, :null => false
+    end
+  end
+
+  def self.down
+    drop_table :blog_entries
+  end
+end
+
+NOTE:
+* Primary key is automatically created by the migration tool, no need to specify it.
+* created_at keeps a timestamp when record is created
+* created_on keeps a timestamp when record is created or updated
+* type 'text' converts to one of the BLOB types (depending on the limit)
+Look more at:
+http://www.packtpub.com/article/working-with-rails-activerecord-migrations-models-scaffolding-and-database-completion
+
+15. To complete migration, type inside RAILS_ROOT folder:
+> rake db:migrate
+Version of the DB is kept in schema_info table in the DB, and particular version (rollback) can be obtained via:
+> rake db:migrate VERSION=x
+
+16. Adding other tables is similar, but other than tables, relations between tables should be also added. Good starting point would be:
+http://guides.rubyonrails.org/association_basics.html
+
+17. First, I will create Comments table by typing:
+> rails generate model Comment
+And then edit /db/migrate/xxx_create_comments.rb to make it like:
+class CreateComments < ActiveRecord::Migration
+  def self.up
+    create_table :comments do |t|
+      t.column :created_at, :timestamp
+      t.column :created_on, :timestamp
+      t.column :blog_entry_id, :integer, :null => false
+      t.column :user_id, :integer, :null => false
+    end
+  end
+
+  def self.down
+    drop_table :comments
+  end
+end
+
+18. Then, I'm editing already generated /app/models/blog_entry.rb and comment.rb files to add associations to them:
+#blog_entry.rb
+class BlogEntry < ActiveRecord::Base
+  has_many :comments
+end
+
+#comment.rb
+class Comment < ActiveRecord::Base
+  belongs_to :blog_entry
+end
+
+This should add 1:n relationship between BlogEntry and Comment tables
+
+
+
+
+
+

@@ -1,0 +1,56 @@
+<!DOCUMENT html>
+
+<html>
+
+<head>
+  <title>RVM installation and usage</title>
+</head>
+
+<body>
+  <h2>RVM installation and usage</h2> 
+  <br />
+  
+  <p>
+    A lot of information can be obtained from <a href="https://rvm.beginrescueend.com/">RVM web site</a>, but I'll show some short version of my own tutorial, also based on 
+    Rob Conery's screencast published on tekpub.com. Basically, this is an essence of what I will probably need in the future.
+  </p>
+  
+  <p>
+    <h3>Installing RVM for Ubuntu workstation</h3>
+      1. Install Aptitude
+      <pre>
+        > sudo apt-get install aptitude
+      </pre>
+      2. Install base stuff (one by one):
+      <pre>
+      sudo aptitude install build-essential bison openssl libreadline5 \ 
+                              libreadline5-dev curl git zlib1g zlib1g-dev \ 
+                              libssl-dev libsqlite3-0 libsqlite3-dev sqlite3 \ 
+                              libxml2-dev libmysqlclient-dev autoconf
+      </pre>
+      3. Use CURL to get and install the source for RVM
+      <pre>
+        > bash < <( curl http://rbm.beginrescueend.com/releases/rvm-install-head )
+      </pre>
+
+      4. The post-install process for installing RVM is to apply this setting to a settings file with:
+      <pre>
+        > gedit .bashrc
+      </pre>
+      &nbsp;&nbsp;&nbsp;And add last line to be:
+      <pre>
+        [[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" # This loads RVM into a shell session.
+      </pre>
+      &nbsp;&nbsp;&nbsp;Restart the console. If everything went fine, there should be response from the program if RVM is requested with:
+      <pre>
+        > rvm    
+      </pre>
+      &nbsp;&nbsp;&nbsp;More on installing RVM can be found in <a href="https://rvm.beginrescueend.com/rvm/install/">RVM installation guide</a>.
+  </p>
+  <p>
+    <h3></h3>
+  </p>
+  
+</body>
+
+</html>
