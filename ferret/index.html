@@ -110,6 +110,60 @@
     </pre>
     More can be found in <a href="https://github.com/jkraemer/acts_as_ferret/wiki/AdvancedUsage">advanced topics</a>. 
   </p>
+  <p>
+    <h3>More usage of Ferret</h3>
+    There is a nice sample article explaining how to jump start into Ferret and it can be found <a href="http://www.chrisumbel.com/article/ruby_fulltext_ferret">here</a>. Also, I 
+    downloaded ebook called 'Ferret' by O'Reilly which is a good guide into all things Ferret related.
+    As for a sample, here is how it's possible to quickly create an index file:
+    <pre>
+      require 'ferret'
+      include Ferret
+      
+      # get of create an index on the filesystem
+      index = Index::Index.new(:path => './test.idx')
+      
+      # store a document
+      index << {
+        :title => 'A Cool Article',
+        :content => 'Penguins are cool.'
+      }
+      
+      # store another document
+      index << {
+        :title => 'A Hot Article',
+        :content => 'Volcanoes are hot'
+      }
+    </pre>
+    To search the index (searching for the word 'hot' in the content field), you can do something like this:
+    <pre>
+      # search the index for the word hot in the content field 
+      index.search_each('content: "hot"') do |id, score|
+        puts "SCOREL #{score}\tTITLE: #{index[id][:title]}"
+      end
+    </pre>
+    In case all fields should be matched-up:
+    <pre>
+      #search the index for the word 'hot' in all fields
+      index.search_each('*: "hot"') do |id, score|
+        puts "SCORE: #{score}\tTITLE: #{index[id][:title]}"
+      end
+    </pre>
+    To use highlighting, you can use following example which wraps matching terms in strong tags:
+    <pre>
+      # search the index for the word hot
+      index.search_each('content: "hot"') do |id, score|
+        # put highlights into a copy of the content field
+        # by way of <string> HTML tags
+        highlights = index.highlight('content: "hot"',
+          id,
+          :field => :content,
+          :pre_tag => "<strong>",
+          :post_tag => "</strong>")
+        
+        puts highlights
+      end
+    </pre>
+  </p>
   
 </body>
 
