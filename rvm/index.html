@@ -4,6 +4,13 @@
 
 <head>
   <title>RVM installation and usage</title>
+  
+  <style type="text/css">
+    .exclamated {
+      background:#eff79b;
+    }
+  </style>
+  
 </head>
 
 <body>
@@ -48,7 +55,85 @@
       &nbsp;&nbsp;&nbsp;More on installing RVM can be found in <a href="https://rvm.beginrescueend.com/rvm/install/">RVM installation guide</a>.
   </p>
   <p>
-    <h3></h3>
+    <h3>Ruby gem manipulation</h3>
+    Get list of currently installed gems:
+    <pre>
+      > gem list
+    </pre>
+    Environment settings for gems:
+    <pre>
+      > gem env
+    </pre>
+    To install new gem (rails, for example)
+    <pre>
+      > gem install rails
+    </pre>    
+  </p>
+  <p>
+    <h3>Basic RVM commands</h3>
+    Get version of Ruby that is currently active:
+    <pre>
+      > ruby -v
+    </pre>
+    List all installed rubies:
+    <pre>
+      > rvm list
+    </pre>
+    To install Ruby 1.9.2, for example:
+    <pre>
+      > rvm install 1.9.2
+    </pre>
+    To select specific version of Ruby to use:
+    <pre>
+      > rvm use 1.9.2
+    </pre>
+    To set some version of Ruby to be default one:
+    <pre>
+      > rvm use 1.9.2 --default
+    </pre>
+    Verify the instance info, used paths and other info stuff:
+    <pre>
+      > rvm info
+    </pre>
+  </p>
+  <p>
+    <h3>Gemset manipulation</h3>
+    To view all existing gemsets:
+    <pre>
+      > rvm gemset list
+    </pre>
+    To get the name of the currently active gemset:
+    <pre>
+      > rvm gemset name
+    </pre>
+    Create new gemset (called 'test'):
+    <pre>
+      > rvm gemset create test
+    </pre>
+    To delete existing gemset:
+    <pre>
+      > rvm gemset delete test
+    </pre>
+    To switch to the (for example, 'test') gemset:
+    <pre>
+      > rvm use 1.9.2@test
+    </pre>
+    <div class="exclamated">
+    To automate switching between different gemsets, it's possible to create .rvmrc file inside of each project directory. Then, when switching to the project directory of choice,
+    you will be automatically using created gemset. For example, let's say we have 2 projects called site1 and site2. To make automatical switch and use 2 different gemsets you
+    should first create new gemsets and then assign them to each project by modifying corresponding .rvmrc file:
+    <pre>
+      > rvm gemset create test1
+      > rvm gemset create test2
+      > echo "rvm 1.9.2@test1" > site1/.rvmrc
+      > echo "rvm 1.9.2@test2" > site2/.rvmrc
+    </pre>
+    Now, when you switch to the project directory of choice, you will be asked if you want to trust the .rvmrc file and if you say 'yes', selected gemset will be automatically
+    activated for you.
+    </div>
+    <br/>
+    <b>NOTE:</b><br/>
+    When switched to the new (or existing) gemset, if you want to see all the gems, the gems from current gemset, as well as gems from global are going to be displayed.
   </p>
   
 </body>

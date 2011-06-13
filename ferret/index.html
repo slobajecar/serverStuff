@@ -1,0 +1,116 @@
+<!DOCUMENT html>
+
+<html>
+
+<head>
+  <title>Using Ferret (Ruby native port od Lucene)</title>
+  
+  <style type="text/css">
+    .exclamated {
+      background:#eff79b;
+    }
+  </style>
+  
+</head>
+
+<body>
+  <h2>Using Ferret (Ruby native port od Lucene)</h2> 
+  <br />
+  
+  <p>
+  Ferret is a Ruby native port of Lucene search indexer/searcher that shuold be easy to use.
+  </p>
+  
+  <p>
+    <h3>Installation</h3>
+    With Ruby 1.8.7, installation shuold be very simple and it shuold be done with:
+    <pre>
+      > gem install ferret
+    </pre>
+    However, it's not going to work (at least yet) with Ruby 1.9.2 so basically the only workaround here is to import other similar gem (doing hopefully the same thing) by executing:
+    <pre>
+      > gem install sdsykes-ferret
+    </pre>
+    This should install ferret and make it ready for use.
+  <p>
+  <p>
+    <h3>Some typical usage with Anemone (web crawler Ruby engine)</h3>
+    What follows is an example of the code which is used to crawl certain web pages and add keywords into index. Then Ferret's search method is used to perform a fast search on the
+    indexed words. As a crawler, Anemone is used and in order to run, you should (besides Ferret ie. sdsykes-ferret) install anemone gem as well:
+    <pre>
+      > gem install anemone
+    </pre>
+    And here is the sample:
+    <div class="exclamated">
+      <pre>
+        require 'anemone'
+        require 'ferret'
+        require 'open-uri'
+
+        include Ferret
+
+        index = Index::Index.new(:path => './chrisumbel.idx')
+
+        # crawl this page
+        Anemone.crawl("http://www.chrisumbel.com") do |anemone|
+          # only process pages in the article directory
+          anemone.on_pages_like(/article\/[^?]*$/) do |page|
+            #store the page in the index of 'title' is not nil
+            if (page.doc.at('title'))
+              index << {
+                :url => page.url,
+                :title => page.doc.at('title').text,
+                :content => page.doc.css('div.content_piece').text
+              }
+            end            
+            puts "#{page.url} indexed."
+          end
+        end
+
+        # search the index for articles with either ruby or python
+        index.search_each('content: "ruby" or "python"') do |id, score|
+          puts "SCORE: #{score}\tTITLE: #{index[id][:title]}"
+        end        
+      </pre>
+    </div>
+  </p>
+  <p>
+    <h3>Acts_As_Ferret plugin - integration with model</h3>
+    For Rails framework, it's a great idea to put Ferret support into model so that, when new record is added, it's added automatically into the index. This is possible by using 
+    Acts_As_Ferret plugin (github wiki page can be found <a href="https://github.com/jkraemer/acts_as_ferret/wiki">here</a>). To install it:
+    <pre>
+      > gem install acts_as_ferret
+    </pre>
+    Also, projects home page can be found <a href="http://www.jkraemer.net/projects/acts_as_ferret">here</a>.
+    Now, to use it in a model file, you should add acts_as_ferret method:
+    <pre>
+      class Foo < ActiveRecord::Base
+        acts_as_ferret
+      end
+    </pre>
+    By using this, all CRUD operations will be performed on both ActiveRecord (as usual) and a ferret index for further searching. Aaf will try to connect to an indexing server via
+    DRb if one is configured in config/ferret_server.yml for the current environment.
+    Or you can do something like this (to make it more specialized) and not to affect whole model:
+    <pre>
+      class Foo < ActiveRecord::Base
+        acts_as_ferret :fields => [:title, :content]
+      end
+    </pre>
+    Now, to use this index, you can add find methods to your controller logic:
+    <pre>
+      Foo.find_with_ferret(query) # Query is a string representing your query
+    </pre>
+    Or you can get it like:
+    <pre>
+      class ActiclesController < ApplicationController
+        def search
+          @article = Article.find_with_ferret(@params['search_string'])
+        end
+      end
+    </pre>
+    More can be found in <a href="https://github.com/jkraemer/acts_as_ferret/wiki/AdvancedUsage">advanced topics</a>. 
+  </p>
+  
+</body>
+
+</html>
