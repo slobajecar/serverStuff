@@ -1,0 +1,83 @@
+<!DOCUMENT html>
+
+<html>
+
+<head>
+  <title>Rails3/RSpec guide</title>
+  
+  <style type="text/css">
+    .exclamated {
+      background:#eff79b;
+    }
+  </style>
+  
+</head>
+
+<body>
+  <a href="../index.html">&lt;&nbsp;back</a>
+  <br />
+  <h2>RSpec guidelines</h2> 
+  <br />
+  <p>
+    <h3><a name="install">Starting and installing RSpec</a></h3>
+    To start a new rails project without Test::Unit framework (for example, if I'm about to use RSpec):
+    <pre>
+      > rails new sample_app -T
+    </pre>
+    In that case, Gemfile should be modified so that it includes rspec gem. Since it should be used in both development and test environments, this is an example of using it in the new
+    Gemfile:
+    <pre>
+      ...
+      group :development do
+        gem 'rspec-rails', '2.6.1'
+      end
+
+      group :test do
+        gem 'rspec', '2.6.0'
+        gem 'webrat', '0.7.3'
+      end
+      ...
+    </pre>
+    Webrat here is a testing utility which used to be included automatically as a dependancy, but now needs to be included explicitly. To install these gems:
+    <pre>
+      > bundle install
+    </pre>
+    And finally, in order to use RSpec instead of the Test::Unit, files needed for RSpec needs to be installed. This is done by:
+    <pre>
+      > rails generate rspec:install
+    </pre>
+    To start a test on whole <i>spec</i> directory:
+    <pre>
+      > rspec spec/
+    </pre>
+  </p>
+  <p>
+    <h3><a name="controller">Modifying controller RSpec tests</a></h3>
+    In generated controller RSpec tests, <i>describe</i> can have any text that explains what example block (between <i>it</i> and <i>do</i>) does. With <i>get 'home'</i> the GET
+    operation is performed and it's result is analyzed by <i>response</i> later in the test. 
+    If you want to render the views (what you might need because of the analysis of page content), you should add <i>render_views</i> command in the rspec file:
+    <pre>
+      describe PagesController do
+        render_views
+        ...
+    </pre>
+    Possible response analysis can be:
+    <ul>
+      <li>response.should be_success - checks that response has status 200 (OK)</li>
+      <li>response.should have_selector('title', :content => "Sample title") - this one checks if there is a <i>title</i> with a 'Sample title' text present in the response</li>
+    </ul>
+    It's also possible to add block of code in the test file which will be executed before each test:
+    <pre>
+      before(:each) do
+        #
+        # Define some preconditions here
+        #
+      end
+      ... further tests...
+    </pre>
+  </p>
+  <br />
+  <a href="../index.html">&lt;&nbsp;back</a>
+</body>
+
+</html>

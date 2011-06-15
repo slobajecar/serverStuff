@@ -1,0 +1,43 @@
+<!DOCUMENT html>
+
+<html>
+
+<head>
+  <title>General guidelines</title>
+  
+  <style type="text/css">
+    .exclamated {
+      background:#eff79b;
+    }
+  </style>
+  
+</head>
+
+<body>
+  <a href="../index.html">&lt;&nbsp;back</a>
+  <br />
+  <h2>Typical Rails application building steps</h2> 
+  <br />
+  <p>
+    <h3>Initial steps</h3>
+    <ul>
+      <li>Start new project with support for RSpec instead of standard Test::Unit as described <a href="rspec/index.html#install">here</a>.</li>
+      <li>If you want to check in now, you can rename README to README.markdown since GitHub will use it with Markdown text features (Wiki-like)</li>
+      <li>Generate static pages by either adding them <a href="controller/index.html#staticpages">through controller</a> or <a href="controller/index.html#manualpages">manually</a></li>
+      <li>Remove folder tests spec/views and spec/helpers if you don't need them and <a href="rspec/index.html#controller">modify generated RSpec controller tests</a> to test for 
+          new pages (write failing tests and make them work).</li>
+      <li>Extract some template for static pages (maybe a title) to avoid duplication and possibly add instance variables into controller to use them in a view.</li>
+      <li>Add some helpers (like title helper) and place them in app/helpers/application_helper.rb for global reach</li>
+      <li>If you want to use some other CSS (like Blueprint), you can download it and move it to public/stylesheets and then link to them in app/views/layouts/application.html.erb
+          <pre>
+            <%= stylesheet_link_tag 'blueprint/screen', :media => 'screen' %>
+            <%= stylesheet_link_tag 'blueprint/print', :media => 'print' %>
+          </pre>
+          </li>
+    </ul>
+  </p>
+  <br />
+  <a href="../index.html">&lt;&nbsp;back</a>
+</body>
+
+</html>

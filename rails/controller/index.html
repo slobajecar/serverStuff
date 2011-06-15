@@ -1,0 +1,55 @@
+<!DOCUMENT html>
+
+<html>
+
+<head>
+  <title>Controller guide</title>
+  
+  <style type="text/css">
+    .exclamated {
+      background:#eff79b;
+    }
+  </style>
+  
+</head>
+
+<body>
+  <a href="../index.html">&lt;&nbsp;back</a>
+  <br />
+  <h2>Controller guidelines</h2> 
+  <br />
+  <p>
+    <h3><a name="staticpages">Add static pages</a></h3>
+    All pages located in <i>public</i> folder can be accessible from the browser, without the need to add routes.
+    To add static pages by using controller (generates Pages controller with actions home and contact):
+    <pre>
+      > rails generate controller Pages home contact
+    </pre>
+    This will update config/routes.rb file to add statements for getting these pages.
+  </p>
+  <p>
+    <h3><a name="manualpages">Adding pages manually</a></h3>
+    To add a page manually, you should first add it's action in the current controller class, for example:
+    <pre>
+      class PagesController < ApplicationController
+        ...
+        def about 
+        end
+    </pre>
+    Then <i>about</i> action should be added into routes file (for example):
+    <pre>
+      SampleApp::Aplication.routes.draw do
+        ...
+        get "pages/about"
+        ...
+      end
+    </pre>
+    And finally, view should be added as well (in this case, you should create file about.html.erb with corresponding markup).
+    
+  </p>
+
+  <br />
+  <a href="../index.html">&lt;&nbsp;back</a>
+</body>
+
+</html>
