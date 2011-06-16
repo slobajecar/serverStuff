@@ -1,0 +1,63 @@
+<!DOCUMENT html>
+
+<html>
+
+<head>
+  <title>Rails 3 helpers</title>
+  
+  <style type="text/css">
+    .exclamated {
+      background:#eff79b;
+    }
+  </style>
+  
+</head>
+
+<body>
+  <a href="../index.html">&lt;&nbsp;back</a>
+  <br />
+  <h2>Rails 3 helpers</h2> 
+  <br />
+  <p>
+    <h3><a name="helpers">List of usable Rails 3 helper methods</a></h3>
+    Inserting a image located in public/images, with defined alt and class tags.
+    <pre>
+      <%= image_tag("logo.png", :alt => "Sample App", :class => "round") %>
+    </pre>
+    To add image link, good approach would be to define separately image tag and separately a link like:
+    <pre>
+      <% logo = image_tag("logo.png", :alt => "Sample App", :class => "round") %>
+      <%= link_to logo, root_path %>
+    </pre>
+    Adding a link called 'Home' which includes classes signup_button and round. Also, it uses named route (home_path) since every page created with controller (like 'home') has 
+    appropriate named route called &ltpage_name&gt_path. These named routes are created when appropriate routing routes are defined in config/routes.rb.
+    <pre>
+      <%= link_to "Home", home_path, :class => "signup_button round" %>
+    </pre>
+    Named routes which are created when adding route in config/routes.rb like:
+    <pre>
+      match '/about', :to => 'pages#about'
+    </pre>
+    are, for example:
+    <pre>
+      about_path => '/about'
+      about_url => 'http://localhost:3000/about'
+      or
+      root_path => '/'
+      root_path => 'http://localhost:3000'
+    </pre>
+    Looks for a file called app/views/layouts/_stylesheets.html.erb, evaluate it's contents and inserts results into the view. Can be used in app/views/layouts/application.html.erb.
+    <pre>
+      <%= render 'layouts/stylesheets' %>
+    </pre>
+    This can be also done for header and footer which will look up for corresponding _header.html.erb and _footer.html.erb files:
+    <pre>
+      <%= render 'layouts/header' %>
+      <%= render 'layouts/footer' %>
+    </pre>
+  </p>
+  <br />
+  <a href="../index.html">&lt;&nbsp;back</a>
+</body>
+
+</html>

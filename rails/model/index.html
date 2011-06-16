@@ -1,0 +1,91 @@
+<!DOCUMENT html>
+
+<html>
+
+<head>
+  <title>Model guide</title>
+  
+  <style type="text/css">
+    .exclamated {
+      background:#eff79b;
+    }
+  </style>
+  
+</head>
+
+<body>
+  <a href="../index.html">&lt;&nbsp;back</a>
+  <br />
+  <h2>Model guidelines</h2> 
+  <br />
+  <p>
+    <h3><a name="create">Creating model</a></h3>
+    Model creation is already describes in <a href="../db/index.html">database part</a> since during model creation, DB migration file is created as well.
+  </p>
+
+  <p>
+    <h3><a name="annotate">Annotate model</a></h3>
+    To annotate a model, you should install annotate-model gem by, for example, modifying Gemfile with:
+    <pre>
+      group :development do
+        gem 'annotate-models', '1.0.4'
+        ...
+      end
+      ... and maybe you should not add it into test...
+    </pre>
+    and then executing:
+    <pre>
+      > bundle install
+    </pre>
+    After installation, all that's left to do is to start annotation:
+    <pre>
+      > annotate
+    </pre>
+  </p>
+  
+  <p>
+    <h3><a name="accessible">Accessible attributes</a></h3>
+    To assign accessible attributes in the model (attributes that can be changed and accessed), you should modify appropriate model file by adding, for example:
+    <pre>
+      class User < ActiveRecord::Base
+        attr_accessible :name, :email
+      end
+    </pre>
+  </p>
+  
+  <p>
+    <h3><a name="validation">Validating model</a></h3>
+    Validation can be performed on the model and there are several offered principles that can be used.
+    To validation presence of some attribute in the model:
+    <pre>
+      class User < ActiveRecord::Base
+        attr_accessible :name, :email
+        
+        validates :name, :presence => true
+      end
+    </pre>
+    To validate for length:
+    <pre>
+      validates :name,  :presence => true,
+                        :length => { maximum => 50 }
+    </pre>
+    To validate format (example for email address):
+    <pre>
+      email_regex = /\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i
+      
+      validates :email, :presence => true,
+                        :format => { :with => email_regex }
+    </pre>
+    Uniqueness validation:
+    <pre>
+      validates :email, :presence => true,
+                        :format => { :with => email_regex }
+                        :uniqueness => { :case_sensitive => false }
+    </pre>
+  </p>
+
+  <br />
+  <a href="../index.html">&lt;&nbsp;back</a>
+</body>
+
+</html>

@@ -16,6 +16,39 @@
 <body>
   <a href="../index.html">&lt;&nbsp;back</a>
   <br />
+  <h2>Tips 'n' tricks</h2>
+  <br />
+  <p>
+    To start a console in a sandbox (so that it doesn't affect the DB):
+    <pre>
+      > rails console --sandbox
+    </pre>
+    When working in a console, it's good to keep an eye on a log file, especially development log file since all the changes done will be visible there:
+    <pre>
+      > tail -f log/development.log
+    </pre>
+    To include debugging information you could edit app/views/layouts/application.html.erb file so that debug info is displayed on each page that includes this info.
+    <pre>
+      ...
+      <%= render 'layouts/footer' %>
+      <%= debug(params) if Rails.env.development? %>
+    </pre>
+    To pull out ID of the record on 'show' or 'edit' page:
+    <pre>
+      User.find(params[:id])
+    </pre>
+    To change or to point out to which environment should be used:
+    <pre>
+      > rails console test 
+      => starts console in a test environment
+      
+      > rails server --environment production
+      => starts server in production environment
+      
+      > rake db:migrate RAILS_ENV=production
+      => performs migration in production environment
+    </pre>
+  </p>
   <h2>Typical Rails application building steps</h2> 
   <br />
   <p>
@@ -28,12 +61,31 @@
           new pages (write failing tests and make them work).</li>
       <li>Extract some template for static pages (maybe a title) to avoid duplication and possibly add instance variables into controller to use them in a view.</li>
       <li>Add some helpers (like title helper) and place them in app/helpers/application_helper.rb for global reach</li>
-      <li>If you want to use some other CSS (like Blueprint), you can download it and move it to public/stylesheets and then link to them in app/views/layouts/application.html.erb
+      <li>If you want to use some other CSS (like Blueprint), you can download it and move it to public/stylesheets and then link to them in app/views/layouts/application.html.erb.
+          Also, CSS patches for IE should be included, so part that handles all that in the <i>head</i> tag might look something like:
           <pre>
+            <%= csrf_meta_tag %>
+            &lt;!-- [if lt IE 9]&gt;
+            &lt;script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"&gt;&lt;/script&gt;
+            &lt;![endif] --&gt;
             <%= stylesheet_link_tag 'blueprint/screen', :media => 'screen' %>
             <%= stylesheet_link_tag 'blueprint/print', :media => 'print' %>
+            &lt;!-- [if lt IE 8]><%= stylesheet_link_tag 'blueprint/ie' %&gt;&lt;![endif] --&gt;
+            <%= stylesheet_link_tag 'custom', :media => 'screen' %>
           </pre>
+          This will include some cross-page calls (csrf_meta_tag), patch for html5 from google for IE's older than version 9, Blueprint CSS for IE versions less than 8 and, finally, 
+          custom CSS that will be used on pages. As a part of this step, custom.css should be created in public/stylesheets.
           </li>
+        <li>Add some <a href="helpers/index.html">helper methods</a> to reduce overhead.</li>
+        <li>Introduce partials to clear things up a little bit (these are the files whose name starts with an underscore). The reference is <a href="helpers/index.html">here</a>, under
+            'render' commands.</li>
+        <li>Time to add some <a href="rspec/index.html#integration">integration tests</a>.</li>
+        <li>Now I'm adding some models and views to that models with an idea to create own authentication system. First, <a href="db/index.html#model">create a model</a>.</li>
+        <li>It's a good thing to include <i>annotate-models</i> gem which will <a href="model/index.html#annotate">add headers to all models with descriptions</a>.</li>
+        <li>Then, you should define <a href="model/index.html#accessible">accessible attributes</a> which are the ones that can be modified in the model by external code.</li>
+        <li>You can play in a <a href="db/index.html#activerecord">sandbox with DB models</a> to see how it all works</li>
+        <li>It's a good idea to add <a href="model/index.html#validation">validation</a> at this point.</li>
+        <li>After adding validations, it's good to create supporting <a href="rspec/index.html#modeltesting">tests that will test validation</a>.</li>
     </ul>
   </p>
   <br />

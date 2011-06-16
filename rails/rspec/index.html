@@ -53,18 +53,20 @@
   </p>
   <p>
     <h3><a name="controller">Modifying controller RSpec tests</a></h3>
+    Controller tests can only 'get' urls for that particular controller. To get other urls, you should use integration tests. 
     In generated controller RSpec tests, <i>describe</i> can have any text that explains what example block (between <i>it</i> and <i>do</i>) does. With <i>get 'home'</i> the GET
     operation is performed and it's result is analyzed by <i>response</i> later in the test. 
     If you want to render the views (what you might need because of the analysis of page content), you should add <i>render_views</i> command in the rspec file:
     <pre>
       describe PagesController do
-        render_views
+        <strong>render_views</strong>
         ...
     </pre>
     Possible response analysis can be:
     <ul>
       <li>response.should be_success - checks that response has status 200 (OK)</li>
       <li>response.should have_selector('title', :content => "Sample title") - this one checks if there is a <i>title</i> with a 'Sample title' text present in the response</li>
+      <li>user_mode.should_not be_valid - checks if user_mode object is valid</li>
     </ul>
     It's also possible to add block of code in the test file which will be executed before each test:
     <pre>
@@ -74,6 +76,59 @@
         #
       end
       ... further tests...
+    </pre>
+  </p>
+  <p>
+    <h3><a name="integration">Integration tests</a></h3>
+    To generate integration tests (for example, for layout_links):
+    <pre>
+      > rails generate integration_test layout_links
+    </pre>
+    This will generate spec/requests/layout_links_spec.rb file. Good starting point would be to create test that will check existing routes like:
+    <pre>
+      describe "Layout Links" do
+        it "should habe a Home page at '/'" do
+          get '/'
+          response.should have_selector('title', :content => "Home")
+        end
+      end
+    </pre>
+    This way, routes are checked, but in order to check if all the links are pointing correctly to assigned pages, you should do something like:
+    <pre>
+      it "should have the right links on the layout" do
+        visit root_path
+        click_link "About"
+        response.should have_selector('title', :content => "About")
+        click_link "Home"
+        response.should have_selector('title', :content => "Home")
+        ...
+      end
+    </pre>
+  </p>
+  <p>
+    <h3><a name="modeltesting">Testing models</a></h3>
+    Example of testing user model in spec/models/user_spec.rb
+    <div class="exclamation">
+      <pre>
+        before(:each) do
+          @attr = { :name => "Example User", :email => "some@email.com" }
+        end
+        
+        it "should create a new instance given valid attributes" do
+          User.create!(@attr)
+        end
+        
+        it "should require a name" do
+          user = User.new(@attr.merge(:name => "Other name"))
+          user.should_not be_valid
+        end
+      </pre>
+    </div>
+    <i>Merge</i> method here is used to change on a fly some of the attributes of the model.
+    <br />
+    To point out that something needs to be tested but is not implemented yet:
+    <pre>
+      it "should require testing a name"
     </pre>
   </p>
   <br />

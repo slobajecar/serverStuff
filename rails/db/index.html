@@ -1,0 +1,149 @@
+<!DOCUMENT html>
+
+<html>
+
+<head>
+  <title>DB operations</title>
+  
+  <style type="text/css">
+    .exclamated {
+      background:#eff79b;
+    }
+  </style>
+  
+</head>
+
+<body>
+  <a href="../index.html">&lt;&nbsp;back</a>
+  <br />
+  <h2>DB operations from RoR point of view</h2> 
+  <br />
+  <p>
+  Base class for working with databases in RoR world is <i>ActiveRecord</i>. Contrary to some other approaches, it's not working with DB over XML configuration files used for mapping,
+  but it works by assigning attributes to each DB column. Other features of ActiveRecord are:
+  <ul>
+    <li>associations - possibility to define relationships between ActiveRecord classes like 1:1, 1:n and n:n.</li>
+    <li>callbacks - set of hooks used to allow performing some actions during life cycle of the object 
+        (ex. do something before saving, after record is updated create record in audit log</li>
+    <li>validations - special set of callbacks allowing data validation on the model</li>
+  </ul>
+  </p>
+  
+  <p>
+    <h3><a name="install">Installation</a></h3>
+    The connection to the DB that needs to be used is defined in config/database.yml file.
+  </p>
+  
+  <p>
+    <h3><a name="model">Creating a model</a></h3>
+    To create a model:
+    <pre>
+      > rails generate model User name:string email:string
+    </pre>
+    This will generate model, as well as DB migration file which can be found in db/migrate/&lt;timestamp&gt;_create_users.rb. There, <i>def self_up</i> describes what will happen when
+    migration is executed and <i>def self_down</i> will describe what will happen migration is rolled back. Also, <i>t.timestamp</i> in this file is a special command that creates two
+    'magic' columns called created_at and updated_at which are timestamps that automatically record when a given user is created and updated. Also, id column is automatcally created and
+    autoincremented.
+    To start migration:
+    <pre>
+      > rake db:migrate
+    </pre>
+    To roll back the migration:
+    <pre>
+      > rake db:rollback
+    </pre>
+  </p>
+  
+  <p>
+    <h3><a name="activerecord">ActiveRecord</a></h3>
+    Nice place to play with ActiveRecord is the console sandbox accessible by:
+    <pre>
+      > rails console --sandbox
+    </pre>
+    Here are some snippets that should work on a model and which will create, read, update and delete (CRUD) some objects:
+    <pre>
+      User.new          
+      => creates new user object in memory
+      
+      user = User.new(:name => "Some name", :email => "Some email")
+      => creates new user object with some predefined values in memory
+      
+      user.save
+      => saves in-memory user object to the DB
+      
+      User.create(:name => "Some name", :email => "Some email")
+      => creates new object in memory and saves it directly to DB
+      
+      user.destroy
+      => deletes a record from the DB
+      
+      User.find(1)
+      => returns user object with id=1. If not found, ActiveRecord::RecordNotFound exception is raised
+      
+      User.find_by_email("some@email.com")
+      => finds a user by email. It can be anything else than email, depending on the fields in the DB.
+      
+      User.first
+      => returns first user
+      
+      User.all
+      => returns all users from the DB
+      
+      > user.email = "some@email.com"
+      > user.save
+      => changes email address of the current user and saves this change (update)
+      
+      user.reload.email
+      => reloads email field of the current object from the DB and disregards all changes to the email property of the user object previously done
+      
+      user.update_attributes(:name => "Some name", :email => "Some email")
+      => updates selected fields with new values, but these fields should have attr_accessible attribute
+    </pre>
+  </p>
+  
+  <p>
+    <h3>Rake manipulations</h3>
+    To perform migration on a DB:
+    <pre>
+      > rake db:migrate
+    </pre>
+    To rollback last migration
+    <pre>
+      > rake db:rollback
+    </pre>
+    To reset DB completely
+    <pre>
+      > rake db:reset
+    </pre>
+    To migrate data from dev DB to test DB
+    <pre>
+      > rake db:test:prepare
+    </pre>
+  </p>
+  <p>
+    <h3>How to add index on DB column</h3>  
+    First you should create appropriate migration:
+    <pre>
+      > rails generate migration add_email_uniqueness_index
+    </pre>
+    Then, add index in the created migration file (here it would be db/migrate/&lt;timestamp&gt;_add_email_uniqueness_index.rb:
+    <pre>
+      class AddEmailUniquenessIndex < ActiveRecord::Migration
+        def self.up
+          add_index :users, :email, :unique => true
+        end
+        
+        def self.down
+          remove_index :users, :email
+        end
+    </pre>
+  </p>
+  Finally, migrate the changes:
+  <pre>
+    > rake db:migrate
+  </pre>
+  <br />
+  <a href="../index.html">&lt;&nbsp;back</a>
+</body>
+
+</html>

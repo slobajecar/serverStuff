@@ -1,0 +1,42 @@
+<!DOCUMENT html>
+
+<html>
+
+<head>
+  <title>Rails 3 routing</title>
+  
+  <style type="text/css">
+    .exclamated {
+      background:#eff79b;
+    }
+  </style>
+  
+</head>
+
+<body>
+  <a href="../index.html">&lt;&nbsp;back</a>
+  <br />
+  <h2>Rails 3 routing</h2> 
+  <br />
+  <p>
+    <h3><a name="routing">General notes</a></h3>
+    Routing should be done by modifying config/routes.rb file, where new routes are added. Example for static pages could be:
+    <pre>
+      SampleApp::Application.routes.draw so
+        match '/contact', :to => 'pages#contact'
+        match '/about', :to => 'pages#about'
+        match '/help', :to => 'pages#help'
+        ...
+      end
+    </pre>
+    This, for example, matches /contact route to Pages controller, Contact action.
+    To redirect route to '/' (or homepage), however, there is another method that should be used in routes.rb:
+    <pre>
+      root :to => 'pages#home'
+    </pre>
+  </p>
+  <br />
+  <a href="../index.html">&lt;&nbsp;back</a>
+</body>
+
+</html>
