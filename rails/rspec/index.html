@@ -50,6 +50,14 @@
     <pre>
       > rspec spec/
     </pre>
+    You can also start just one test file:
+    <pre>
+      > rspec spec/models/user_spec.rb
+    </pre>
+    or just one example which is inside of the file:
+    <pre>
+      > rspec spec/models/user_spec.rb -e "should have an encrypted password attribute"
+    </pre>
   </p>
   <p>
     <h3><a name="controller">Modifying controller RSpec tests</a></h3>
@@ -66,7 +74,13 @@
     <ul>
       <li>response.should be_success - checks that response has status 200 (OK)</li>
       <li>response.should have_selector('title', :content => "Sample title") - this one checks if there is a <i>title</i> with a 'Sample title' text present in the response</li>
+      <li>response.should have_selector("h1>img", :class => "gravatar") - requires that there is a image inside of the h1 header with defined class called gravatar</li>
       <li>user_mode.should_not be_valid - checks if user_mode object is valid</li>
+      <li>@user.encrypted_password.should_not be_blank - checks if specified attribute is blank or not</li>
+      <li>@user.has_password?(@attr[:password]).should be_true - checks if selected attribute should be true or false</li>
+      <li>@user.should be_nil - checks if selected object is nil</li>
+      <li>@user1.should == @user2 - checks if user1=user2</li>
+      <li>assigns(:user).should == @user - input is symbol argument and returns the value of the corresponding instance variable in the controller action</li>
     </ul>
     It's also possible to add block of code in the test file which will be executed before each test:
     <pre>
@@ -77,6 +91,23 @@
       end
       ... further tests...
     </pre>
+    If using Factory Girl, some checks can be made even easier than with fixtures:
+    <pre>
+      before(:each) do
+        @user = Factory(:user)
+      end
+      
+      it "should be successfull" do
+        get :show, :id => @user
+        response.should be_success
+      end
+      
+      it "should find the right user" do
+        get :show, :id => @user
+        assigns(:user).should == @user
+      end
+    </pre>
+    Here, <i>:id => @user</i> does the same thing as <i>:id => @user.id</i> and <i>get :show</i> is same as <i>get 'show'</i>.
   </p>
   <p>
     <h3><a name="integration">Integration tests</a></h3>

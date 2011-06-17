@@ -42,8 +42,14 @@
     </pre>
     This will generate model, as well as DB migration file which can be found in db/migrate/&lt;timestamp&gt;_create_users.rb. There, <i>def self_up</i> describes what will happen when
     migration is executed and <i>def self_down</i> will describe what will happen migration is rolled back. Also, <i>t.timestamp</i> in this file is a special command that creates two
-    'magic' columns called created_at and updated_at which are timestamps that automatically record when a given user is created and updated. Also, id column is automatcally created and
-    autoincremented.
+    'magic' columns called created_at and updated_at which are timestamps that automatically record when a given user is created and updated. Also, id column is automatically created and
+    autoincremented.<br />
+    If you want to add some new column to existing table, it's ok to end migration name with <strong>_to_users</strong> for example, so that Rails knows exactly in which table it should
+    add this column. It's like:
+    <pre>
+      > rails generate migration add_password_to_users encrypted_password:string
+    </pre>
+    To check for the results, you can open db/migrate/&lt;timestamp&gt;_add_password_to_users.rb<br />
     To start migration:
     <pre>
       > rake db:migrate
@@ -98,6 +104,9 @@
       
       user.update_attributes(:name => "Some name", :email => "Some email")
       => updates selected fields with new values, but these fields should have attr_accessible attribute
+      
+      user.respond_to?(:password)
+      => returns true or false depending on whether user object has password attribute or not
     </pre>
   </p>
   

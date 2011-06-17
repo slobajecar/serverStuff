@@ -34,6 +34,12 @@
     <pre>
       <%= link_to "Home", home_path, :class => "signup_button round" %>
     </pre>
+    Link can be added and by passing reference to the object, helper is smart enough to get what needs to be treated as input
+    <pre>
+      <%= link_to user_path(@user), @user %>
+      is equivalent to:
+      <%= link_to user_path(@user), user_path(@user) %>
+    </pre>
     Named routes which are created when adding route in config/routes.rb like:
     <pre>
       match '/about', :to => 'pages#about'
@@ -55,6 +61,77 @@
       <%= render 'layouts/header' %>
       <%= render 'layouts/footer' %>
     </pre>
+    To include gravatar image:
+    <%= gravatar_image_tag 'some@email.com' %>
+  </p>
+  <p>
+    <h3><a name="tools">Usable framework methods and tools</a></h3>
+    To perform one-way hashing:
+    <pre>
+      require 'digest'
+      def secure_hash(string)
+        Digest::SHA2.hexdigest(string)
+      end
+    </pre>
+    To make it more secure, you could add 'salt' as a timestamp:
+    <pre>
+      password = "secret"
+      salt = secure_hash("#{Time.now.utc}--#{password}")
+      encrypted_password = secure_hash("#{salt}--#{password}")
+    </pre>
+    Above, arguments to hashing functions are often separated with '--'.
+  </p>
+  <p>
+    <h3><a name="factorygirl">Factory Girl</a><h3>
+    Since Factory Girl is mostly used in testing environment, it can be added in test group in Gemfile and then you shuold perform <i>bundle install</i>:
+    <pre>
+      group :test do
+        ...
+        gem 'factory_girl_rails', '1.0.1'
+      end
+    </pre>
+    Many find that using factories is much more flexible that fixtures. To create factories, for example, you could start by adding spec/factories.rb file and define a User factory. By
+    putting the factories.rb into spec/ directory we arrange for RSpec to load our factoried automatically whenever our tests run.
+    <pre>
+      # By using the symbol ':user', we get Factory Girl to simulate User model
+      Factory.define :user do |user|
+        user.name         "Some name"
+        user.email        "some@email.com"
+        user.password     "foobar"
+        user.password_confirmation "foobar"
+      end
+    </pre>
+    Now, with this setting, we can create new instance of the user with:
+    <pre>
+      @user = Factory(:user)
+    </pre>
+  </p>
+  <p>
+    <h3><a name="gravatar">Gravatar</a></h3>
+    Gravatar gem can be installed through Gemfile and then executing <i>bundle install</i>. It uses Gravatar service which keeps avatars related to user's email address.
+    <pre>
+      ...
+      gem 'gravatar_image_tag', '1.0.0'
+      ...
+    </pre>
+    Now, to include image tag from Gravatar you can try:
+    <pre>
+      <%= gravatar_image_tag @user.email %>
+    </pre>
+    Since gravatar might be used on many places on site, a good option would be to create a helper method for getting it so that it can be used like:
+    <pre>
+      <%= gravatar_for @user, :size => 30 %>
+    </pre>
+    and <i>gravatar_for</i> helper might be defined as:
+    <pre>
+      def gravatar_for(user, options = { :size => 50 })
+        gravatar_image_tag(user.email.downcase, :alt => user.name,
+                                                :class => 'gravatar',
+                                                :gravatar => options)
+      end
+    </pre>
+    According to the Gravatar documentation, options to gravatar image are passed through :gravatar key where hash is passed as input option. Also, default option for size is already
+    set in this example.
   </p>
   <br />
   <a href="../index.html">&lt;&nbsp;back</a>

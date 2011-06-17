@@ -51,8 +51,11 @@
         attr_accessible :name, :email
       end
     </pre>
+    To check if record is already saved in the DB or not:
+    <pre>
+      do_something if new_record?
+    </pre>
   </p>
-  
   <p>
     <h3><a name="validation">Validating model</a></h3>
     Validation can be performed on the model and there are several offered principles that can be used.
@@ -68,6 +71,8 @@
     <pre>
       validates :name,  :presence => true,
                         :length => { maximum => 50 }
+                        or
+                        :length => { within => 6..40 }
     </pre>
     To validate format (example for email address):
     <pre>
@@ -81,6 +86,30 @@
       validates :email, :presence => true,
                         :format => { :with => email_regex }
                         :uniqueness => { :case_sensitive => false }
+    </pre>
+    When validating passwords, if 'confirmation' attribute is specified, password_confirmation as virtual attribute will be created automatically
+    <pre>
+      validates :password,  :presence => true,
+                            :confirmation => true,
+                            :length => { :within => 6..40 }
+    </pre>
+  </p>
+  <p>
+    <h3><a name="callbacks">ActiveRecord callbacks</a></h3>
+    You can add a hook on some of the ActiveRecord events so that you can perform some actions before regular ActiveRecord actions takes place. For example:
+    <pre>
+      class User < ActiveRecord::Base
+        ...
+        before_save :encrypt_password
+        
+        private
+          def encrypt_password
+            self.encrypted_password = encrypt(password)
+          end
+          
+          def encrypt(string)
+            ...
+          end
     </pre>
   </p>
 
