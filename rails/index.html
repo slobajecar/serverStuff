@@ -91,6 +91,15 @@
         <li>If needed, there is a way of performing <a href="helpers/index.html#tools">one-way hashing and adding salt to make encryption stronger</a>.</li>
         <li>To improve testing you can use <a href="helpers/index.html#factorygirl">Factory Girl gem for making use of factories for testing<a/> instead of fixtures.</li>
         <li>You can install <a href="helpers/index.html#gravatar">gravatar gem</a> which supports usage of avatars from gravatar service.</li>
+        <li>When posting new data to the web site, there might be an errors (validation or some other), one way to display this is to <a href="helpers/index.html#errors">centralize it</a>.</li>
+        <li>Take care about security breach, pasword and confirmation_password remains saved into log file (development as well as production). To filter this
+        	you should add into config/application.rb file line that says what parameters are filtered (this should be done for every secret parameter):
+        	<pre>
+        		config.filter_parameters += [:password]
+        	</pre>
+        </li>
+        <li>It's a good time to test for successfully created new user</li>
+        
     </ul>
   </p>
   <br />

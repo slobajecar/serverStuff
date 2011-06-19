@@ -63,6 +63,41 @@
     </pre>
     To include gravatar image:
     <%= gravatar_image_tag 'some@email.com' %>
+    To redirect (if some condition is met, for example) to some other page:
+    <pre>
+    	redirect_to @user
+    </pre>
+    To add a form for posting data and related to a some object (here, for example, user), following peace of code can be used. Here, <i>f</i> represents a
+    form itself.
+    <pre>
+    <%= form_for(@user) do |f| %>
+    	<div class="someClass">
+    		<%= f.label :name %><br/>
+    		<%= f.text_field :name %>
+    		<%= f.password_field :password %>
+    		<%= f.submit "Sign up" %>
+    </pre>
+    <a name="errors">To add centralized errors to pages, you might add partials like this to the page where you create new users:</a>
+    <pre>
+    	<%= form_for(@user) do |f| %>
+    		<%= render 'shared/error_messages' %>
+    </pre>
+    To handle this all the way, you should also create app/views/shared/_error_messages.html.erb file:
+    <pre>
+		<%= if @user.errors.any? %>
+			<div id="error_explanation">
+				<h2><%= pluralize(@user.errors.count, "error") %>
+					prohibited this user from being saved:</h2>
+				<p>There were problems with the following fields:</p>
+				<ul>
+					<% @user.errors.full_messages.each do |msg| %>
+						<li><%= msg %></li>
+					<% end %>
+				</ul>
+			</div>
+		<% end %>    	
+    </pre>
+    Method <i>pluralize</i> writes number and following message in correct plural or singular mode.
   </p>
   <p>
     <h3><a name="tools">Usable framework methods and tools</a></h3>

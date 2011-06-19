@@ -81,6 +81,9 @@
       <li>@user.should be_nil - checks if selected object is nil</li>
       <li>@user1.should == @user2 - checks if user1=user2</li>
       <li>assigns(:user).should == @user - input is symbol argument and returns the value of the corresponding instance variable in the controller action</li>
+      <li>response.should redirect_to(user_path(assigns(:user))) - checks for redirection to users page</li>
+      <li>lambda do...end.should change(User, :count).by(1) - tests if number of users has changed by 1</li>
+      <li>lambda do..end.should_not change(User, :count) - tests that users count haven't changed</li>
     </ul>
     It's also possible to add block of code in the test file which will be executed before each test:
     <pre>
